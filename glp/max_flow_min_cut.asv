@@ -3,7 +3,7 @@
 % valori crescenti di verbose restituiscono più informazioni sui passaggi 
 % intermedi.
 function [MFT, cut] = max_flow_min_cut(CG, s, d, verbose)
-    function [aug, cut] = get_augmenting_path(GR)
+    function [aug, aug_edges, cut] = get_augmenting_path(GR)
         function queue = enqueue(queue, elem)
             queue = [queue; elem];
         end
@@ -18,6 +18,7 @@ function [MFT, cut] = max_flow_min_cut(CG, s, d, verbose)
         end
 
         aug = [];
+        aug_edges = [];
         cut = [];
 
         num_nodes = height(GR.Nodes);
@@ -34,11 +35,15 @@ function [MFT, cut] = max_flow_min_cut(CG, s, d, verbose)
             keep = true(1, length(f_star));
 
             for i = 1:length(f_star)
-                edge = findedge(GR, elem, f_star(i));
+                idx = f_star(i);
+                edge = findedge(GR, elem, idx);
                 if GR.Edges.Fwd(edge, :) == 0
                     keep(i) = false;
                 else
-                    preds(f_star(preds(f_star) == -1)) = elem;
+                    if preds(idx) == -1
+                        preds(idx) = elem;
+                        pred_edges(idx) = edge;
+                    end
                 end
             end
             
@@ -46,8 +51,10 @@ function [MFT, cut] = max_flow_min_cut(CG, s, d, verbose)
 
             if length(find(f_star == d)) ~= 0
                 aug = [d];
+                aug_edges = [];
                 prev = d;
                 while prev ~= s
+                    aug_edges = [pred_edges(prev), aug_edges];
                     prev = preds(prev);
                     aug = [prev, aug];
                 end
@@ -59,6 +66,10 @@ function [MFT, cut] = max_flow_min_cut(CG, s, d, verbose)
         end
 
         cut = find(preds >= 0);
+    end
+
+    if nargin < 4
+        verbose = 0;
     end
 
     edge_table = CG.Edges;
@@ -78,13 +89,7 @@ function [MFT, cut] = max_flow_min_cut(CG, s, d, verbose)
                 + " ------------------------------>");
         end
         
-        [aug, new_cut] = get_augmenting_path(GR);
-        
-        aug_edges = [];
-        num_aug_nodes = length(aug);
-        for i = 1:(num_aug_nodes - 1)
-            aug_edges(end+1) = findedge(GR, aug(i), aug(i + 1)); 
-        end
+        [aug, aug_edges, new_cut] = get_augmenting_path(GR);
 
         if isempty(aug)
             optimal_flow = GR.Edges.Bwd;
@@ -98,6 +103,7 @@ function [MFT, cut] = max_flow_min_cut(CG, s, d, verbose)
             end
             return;
         end
+
         delta = min(GR.Edges.Fwd(aug_edges, :));
         GR.Edges.Fwd(aug_edges, :) = GR.Edges.Fwd(aug_edges, :) - delta;
         GR.Edges.Bwd(aug_edges, :) = GR.Edges.Bwd(aug_edges, :) + delta;
@@ -111,6 +117,11 @@ function [MFT, cut] = max_flow_min_cut(CG, s, d, verbose)
             disp(GR.Edges.Fwd);
             fprintf("\tBackward residues:\n");
             disp(GR.Edges.Bwd);
+
+            value = sum(GR.Edges.Bwd());
+
+            fprintf("\tValue:\n");    
+            disp(value);
         end
     end
 end

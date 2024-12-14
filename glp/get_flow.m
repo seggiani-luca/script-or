@@ -2,6 +2,10 @@
 function flow = get_flow(CFG, TLU)
     flow = zeros(height(CFG.Edges), 1);
     
+    if iscell(TLU{1})
+        TLU = to_index_TLU(CFG, TLU);
+    end
+    
     [T, L, U] = deal(TLU{1}, TLU{2}, TLU{3});
     
     E = CFG.incidence;
@@ -16,4 +20,7 @@ function flow = get_flow(CFG, TLU)
     flow(T) = E_T \ (b - E_U * u_U);
     flow(L) = 0;
     flow(U) = u_U;
+
+    % ci sono errori di approssimazione molto fastidiosi
+    flow = round(flow);
 end

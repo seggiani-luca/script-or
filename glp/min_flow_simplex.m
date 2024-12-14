@@ -1,17 +1,10 @@
 % applica il simplesso su grafi a un oggetto digraph (grafo orientato),
 % partendo da una partizione TLU di base.
 % - @CFG è il digrafo su cui applicare il simplesso;
-% - @baseTLU è la partizione TLU di indici da cui partire;
+% - @base_TLU è la partizione TLU di indici da cui partire;
 % valori crescenti di verbose restituiscono più informazioni sui passaggi 
 % intermedi.
-function MFT = min_flow_simplex(CFG, baseTLU, verbose)
-    function reduced_costs = get_reduced_costs(p)
-        c = CFG.Edges.Costs(:);
-        E = CFG.incidence;
-        
-        reduced_costs = c - E' * p';
-    end
-
+function [MFT, last_TLU] = min_flow_simplex(CFG, base_TLU, verbose)
     function [cycle_p, cycle_m] = get_cycle(enter_idx, T, direction)
         function found = find_in_cell(edge, cell_edges) 
             found = any(cellfun(@(v) isequal(v, edge), ...
@@ -66,11 +59,11 @@ function MFT = min_flow_simplex(CFG, baseTLU, verbose)
         verbose = 0;
     end
 
-    if length(baseTLU{1}{1}) == 2
-        baseTLU = to_index_TLU(CFG, baseTLU);
+    if iscell(base_TLU{1})
+        base_TLU = to_index_TLU(CFG, base_TLU);
     end
 
-    TLU = baseTLU;
+    TLU = base_TLU;
     step = 0;
     
     while true
@@ -99,6 +92,8 @@ function MFT = min_flow_simplex(CFG, baseTLU, verbose)
         flow = get_flow(CFG, TLU);
         potential = get_potential(CFG, TLU);
 
+        r_costs = get_reduced_costs(CFG, potential);
+
         if verbose > 0
             fprintf("\tFlow:\n");
             disp(flow');
@@ -109,9 +104,10 @@ function MFT = min_flow_simplex(CFG, baseTLU, verbose)
 
             fprintf("\tValue:\n\t");
             disp(value);
-        end
 
-        r_costs = get_reduced_costs(potential);
+            fprintf("\tReduced costs:\n");
+            disp(r_costs);
+        end
 
         if all(r_costs(L) >= 0) && all(r_costs(U) <= 0)
             if verbose > 0
@@ -158,6 +154,10 @@ function MFT = min_flow_simplex(CFG, baseTLU, verbose)
         theta_p = min(u_p - x_p);
         theta_m = min(x_m);
         theta = min(theta_p, theta_m);
+        if theta == Inf
+            fprintf("\tNegative cost cycle detected, halting...\n");
+            return;
+        end
     
         p_exit_idxs = cycle_p(u(cycle_p) - flow(cycle_p) == theta);
         m_exit_idxs = cycle_m(flow(cycle_m) == theta);
@@ -177,8 +177,6 @@ function MFT = min_flow_simplex(CFG, baseTLU, verbose)
         TLU = {T, L, U};
     
         if verbose > 1
-            fprintf("\tReduced costs:\n");
-            disp(r_costs);
             fprintf("\tPositive cycle:\n");
             disp(all_edges(cycle_p, :));
             fprintf("\tNegative cycle:\n");
@@ -204,4 +202,6 @@ function MFT = min_flow_simplex(CFG, baseTLU, verbose)
     MFT = digraph(edge_table.EndNodes(:, 1), ...
                  edge_table.EndNodes(:, 2));
     MFT.Edges.Flows = optimal_flow;
+
+    last_TLU = TLU;
 end

@@ -37,8 +37,9 @@ function SPT = shortest_path_tree(FG, from, verbose)
     tableau.Properties.VariableNames = tableau_labels;
 
     while length(open_set) ~= 0
-        [~, min_idx] = min(costs(open_set));
-        min_node = open_set(min_idx); 
+        disp(tableau);
+        min_val = min(costs(:, open_set));
+        min_node = find(costs == min_val, 1, "first");
         f_star = successors(FG, min_node);
         
         for i = 1:length(f_star)
@@ -63,13 +64,12 @@ function SPT = shortest_path_tree(FG, from, verbose)
     end
 
     SPT = digraph();
-    for node = 1:num_nodes
+    for node = num_nodes
         if node == from
             continue
         end
-        SPT = addedge(SPT, preds(node), node);
+        SPT = addedge(SPT, preds(node), node, costs(node));
     end
-    SPT.Edges.Costs = costs(2:end)';
 
     if verbose > 0
         disp(tableau);

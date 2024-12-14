@@ -2,6 +2,10 @@
 function potential = get_potential(CFG, TLU)
     potential = zeros(height(CFG.Nodes), 1);
     
+    if iscell(TLU{1})
+        TLU = to_index_TLU(CFG, TLU);
+    end
+
     [T, L, U] = deal(TLU{1}, TLU{2}, TLU{3});
     
     E = CFG.incidence;

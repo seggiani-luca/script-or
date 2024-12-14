@@ -68,6 +68,10 @@ function [MFT, cut] = max_flow_min_cut(CG, s, d, verbose)
         cut = find(preds >= 0);
     end
 
+    if nargin < 4
+        verbose = 0;
+    end
+
     edge_table = CG.Edges;
     GR = digraph(edge_table.EndNodes(:, 1), ...
                  edge_table.EndNodes(:, 2));
@@ -113,6 +117,17 @@ function [MFT, cut] = max_flow_min_cut(CG, s, d, verbose)
             disp(GR.Edges.Fwd);
             fprintf("\tBackward residues:\n");
             disp(GR.Edges.Bwd);
+
+            value = 0;
+            for i = 1:height(GR.Edges)
+                edge = GR.Edges(i, :);
+                if edge.EndNodes(:, 2) == d
+                    value = value + edge.Bwd;
+                end
+            end
+
+            fprintf("\tValue:\n");    
+            disp(value);
         end
     end
 end
