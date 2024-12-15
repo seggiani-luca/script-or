@@ -1,5 +1,5 @@
 # Programmazione lineare
-Queste funzioni implementano principalmente algoritmi di risoluzione di problemi di programmazione lineare problemi primali e duali, nei formati standard descriti in _M. Pappalardo, Ricerca Operativa_ (si veda la pagina iniziale del progetto), adattati per quanto possibile al formato che si aspetta la funzione `linprog()` dell'Optimization Toolbox di MATLAB.
+Queste funzioni implementano principalmente algoritmi di risoluzione di problemi di programmazione lineare primali e duali, nei formati standard descriti in _M. Pappalardo, Ricerca Operativa_ (si veda la pagina iniziale del progetto), adattati per quanto possibile al formato che si aspetta la funzione `linprog()` dell'Optimization Toolbox di MATLAB.
 
 Nello specifico, si hanno:
 - **Formato primale:** vettore costo `c`, matrice dei vincoli `A` e vettore dei vincoli `b`;
