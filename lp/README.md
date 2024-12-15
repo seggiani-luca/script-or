@@ -61,9 +61,10 @@ Nel caso di problemi che rispettano le condizioni di cui sopra, quindi, si può 
 ```
 - Si risolve con il simplesso a partire dalla base ricavata, con `primal_simplex()` o `dual_simplex()`:
 ```matlab
->> dual_simplex(c, A, b, B) % B è la base precedente, ricavata con feasible_primal_simplex()
+>> primal_simplex(c, A, b, B) % B è la base precedente, ricavata con feasible_primal_simplex()
 ans =
-    0.0500    0.0375         0         0
+    2.5000
+    1.5000
 ```
 
 Altre funzioni, principalmente di calcolo di risultati intermedi e utilità di conversione (fra cui la `dualize()` vista prima) sono rese disponibili e documentate nel codice.
