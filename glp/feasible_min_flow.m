@@ -1,7 +1,7 @@
 % ottiene una funzione di base ammissibile per un grafo di flusso minimo
 % @CFG
 function base_TLU = feasible_min_flow(CFG, verbose)
-    if nargin < 1
+    if nargin < 2
         verbose = 0;
     end
     
