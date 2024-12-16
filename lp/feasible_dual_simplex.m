@@ -23,7 +23,7 @@ function [feasible_B, optimum] = feasible_dual_simplex(c, A, verbose)
     for i = 1:width(A)
         B(end + 1) = i + n;
     end
-    [optimum, feasible_B, val] = dual_simplex(c, A, new_b, B, verbose);
+    [optimum, feasible_B, val] = dual_simplex(c, A, new_b, B, verbose - 1);
     if val ~= 0
         fprintf("\tPolyehdron empty.\n");
         feasible_B = [];

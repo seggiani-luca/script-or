@@ -31,7 +31,7 @@ function base_TLU = feasible_min_flow(CFG, verbose)
     aux_CFG.Edges.Costs = new_edges.Costs;
     aux_CFG.Edges.Caps = new_edges.Caps;
 
-    [MFT, last_TLU] = min_flow_simplex(aux_CFG, {T, {}}, verbose);
+    [MFT, last_TLU] = min_flow_simplex(aux_CFG, {T, {}}, verbose - 1);
     
     edge_table = MFT.Edges;
     T = {};

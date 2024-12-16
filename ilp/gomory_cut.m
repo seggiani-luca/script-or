@@ -35,8 +35,8 @@ function [cuts, normalized_cuts] = gomory_cut(c, A, b, verbose)
                          solve(eqs(eq_idx), new_vars(end))];
     end
 
-    feasible_B = feasible_dual_simplex(c_d, A_d, verbose);
-    [x_B, B] = dual_simplex(c_d, A_d, b_d, feasible_B, verbose);
+    feasible_B = feasible_dual_simplex(c_d, A_d, verbose - 1);
+    [x_B, B] = dual_simplex(c_d, A_d, b_d, feasible_B, verbose - 1);
     
     x_B = x_B(B);
 
@@ -54,9 +54,9 @@ function [cuts, normalized_cuts] = gomory_cut(c, A, b, verbose)
 
     if(verbose > 1)
         fprintf("\tA_B:\n");
-        disp(A_B);
+        disp(A_B');
         fprintf("\tA_N:\n");
-        disp(A_N);
+        disp(A_N');
     end
 
     if(verbose > 0)
