@@ -69,4 +69,4 @@ ans =
 
 Altre funzioni, principalmente di calcolo di risultati intermedi e utilità di conversione (fra cui la `dualize()` vista prima) sono rese disponibili e documentate nel codice.
 
-Si nota che alcune di queste funzioni accettano un ultimo argomento, verbose, che permette di stampare, in corso di esecuzione, informazioni sui passaggi intermedi. verbose è un intero, che restituisce per valori crescenti maggiori di zero più informazioni sul funzionamento interno (ad esempio, 0 o l'omissione stessa di verbose non stampa nulla, 1 stampa basi e indici entranti e uscenti, 2 stampa soluzioni intermedie e via dicendo).
+Si nota che alcune di queste funzioni accettano (come visto sopra) un ultimo argomento, `verbose`, che permette di stampare, in corso di esecuzione, informazioni sui passaggi intermedi. verbose è un intero, che restituisce per valori crescenti maggiori di zero più informazioni sul funzionamento interno (ad esempio, 0 o l'omissione stessa di verbose non stampa nulla, 1 stampa basi e indici entranti e uscenti, 2 stampa soluzioni intermedie e via dicendo).
