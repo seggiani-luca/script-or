@@ -183,5 +183,5 @@ function [optimum_arg, optimum] = binary_knapsack(values, weights, ...
         
 
     [branch_tree, optimum, optimum_arg] = branch(branch_tree, returns, ...
-                                   weights, maximum, values, opt, opt_arg);
-                                                                                                                                                                 end
+                                   weights, maximum, values, opt, opt_arg);                                                                                                                                    
+end
