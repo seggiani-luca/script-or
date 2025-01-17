@@ -34,7 +34,7 @@ base =
 Queste funzioni ottengono gli stessi risultati (se nulla va storto) di `linprog()` con le dovute modifiche agli input (ad esempio, `linprog()` minimizza il primale mentre `primal_simplex()` lo massimizza, come da formato primale standard), con il vantaggio di fornire passaggi intermedi per valori del parametro `verbose` maggiori di 0.
 
 ## Simplesso ausiliare e duale
-Un'implementazione del simplesso duale ausiliario per la ricerca di una base di partenza si trova in `feasible_dual_simplex()`, che prende in argomento solo le va:
+Un'implementazione del simplesso duale ausiliario per la ricerca di una base di partenza si trova in `feasible_dual_simplex()`, che prende in argomento solo le variabili del problema:
 
 ```matlab
 >> feasible_dual_simplex(c, A, b)
