@@ -1,3 +1,9 @@
+% trova i tagli di gomory realizzabili su un problema di programmazione 
+% lineare con vettore costo  @c, matrice dei vincoli @A e vettore dei 
+% vincoli @b. dato che il problema viene convertito al formato duale 
+% standard, cuts rappresenta i tagli rispetto alle variabili introdotte in
+% conversione, mentre normalized_cuts rappresenta i tagli rispetto alle
+% variabili originali del problema
 function [cuts, normalized_cuts] = gomory_cut(c, A, b, verbose)
     function frac = frac_part(a)
         frac = a - floor(a);

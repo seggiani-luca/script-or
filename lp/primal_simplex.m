@@ -3,7 +3,8 @@
 % simplesso primale a partire dalla base @B.
 % valori crescenti di verbose restituiscono più informazioni sui passaggi 
 % intermedi.
-function [optimum, optimum_base] = primal_simplex(c, A, b, B, verbose)
+function [optimum, optimum_base, value] = primal_simplex(c, A, b, B, ...
+                                                                   verbose)
     if nargin < 5
         verbose = 0;
     end
@@ -25,7 +26,7 @@ function [optimum, optimum_base] = primal_simplex(c, A, b, B, verbose)
         y_B = get_dual_solution(A, c, B);
 
         residues = get_residues(A, b, x_B);
-        value = x_B * c;
+        value = dot(x_B, c);
 
         if(verbose > 0)
             fprintf("\tB:\n");

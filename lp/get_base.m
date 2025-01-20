@@ -1,4 +1,4 @@
-% ottiene la base che dà soluzione @x_B di un problema di programmazine 
+% ottiene la base che dà soluzione @x_B di un problema di programmazione 
 % lineare con matrice dei vincoli @A e vettore dei vincoli @b.
 % valori crescenti di verbose restituiscono più informazioni sui passaggi 
 % intermedi.
