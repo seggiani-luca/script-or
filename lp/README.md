@@ -42,12 +42,7 @@ ans =
      1     2
 ```
 
-Una funzione simile, `feasible_primal_simplex()`, è fornita per il primale, ma con alcune controindicazioni.
-Il calcolo della base ammissibile viene realizzato attraverso la funzione `dualize()`, che converte un formato primale in un formato duale (non trova l'associato, ma converte lo stesso problema).
-Questa richiederebbe l'introduzione di variabili ausiliarie di negatività nel caso di variabili al primale definite su R.
-Visto che questo appesantirebbe la logica per il calcolo della base ottima (che richiede di riportare il duale ricavato in un formato primale), ci si aspetta che il primale fornito sia definito su variabili positive (o almeno che abbia un vertice ammissibile a componenti positive).
-Eventuali conversioni di segno per soddisfare questa condizione sono lasciate all'utente.
-Detto questo, la `feasible_primal_simplex()` si comporta come la `feasible_dual_simplex()`:
+Una funzione simile, `feasible_primal_simplex()`, è fornita per il primale:
 ```matlab
 >> feasible_primal_simplex(c, A, b)
 ans =
