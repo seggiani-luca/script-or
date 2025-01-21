@@ -1,19 +1,23 @@
-% trova la soluzione ottima di uno zaino binario sfruttando il branch and
+% trova la soluzione ottima di uno zaino intero sfruttando il branch and
 % bound. @values rappresenta i valori di ogni oggetto, @weights i pesi e
 % @maximum il peso massimo.
 % valori crescenti di verbose restituiscono più informazioni sui passaggi 
 % intermedi.
-function [optimum_arg, optimum] = binary_knapsack(values, weights, ...
-                                                  maximum, verbose)
-    
-    function new_constraints = get_constraints(node, ~)
+function [optimum_arg, optimum] = integer_knapsack(values, weights, ...
+                                                   maximum, verbose)
+
+    function new_constraints = get_constraints(node, data)
         constraints = node{2};
         superior = node{4};
+        limits = data{5};
+
         idx = find(mod(superior, 1) ~= 0);
-        new_constraints = {
-            [constraints, [idx, 0]], ...
-            [constraints, [idx, 1]] 
-        };
+
+        new_constraints = {};
+
+        for i = 1:limits(idx)
+            new_constraints{end + 1} = [constraints, [idx, i]];
+        end
     end
 
     function [val, tot, r, valid] = constrain(r, p, m, constraints)
@@ -57,9 +61,10 @@ function [optimum_arg, optimum] = binary_knapsack(values, weights, ...
         if valid
             for i = 1:length(r)
                 idx = find(r == max(r), 1);
-                if tot + p(idx) <= m
-                    tot = tot + p(idx);
-                    inferior(idx) = 1;
+                if tot < m
+                    amt = floor((m - tot) / p(idx));
+                    tot = tot + amt * p(idx);
+                    inferior(idx) = amt;
 
                     if tot == m
                         break;
@@ -80,28 +85,12 @@ function [optimum_arg, optimum] = binary_knapsack(values, weights, ...
         [superior, tot, r, valid] = constrain(r, p, m, constraints);
 
         if valid
-            for i = 1:length(r)
-                if max(r) == -Inf
-                    break;
-                end
-                
-                if tot == m
-                    break;
-                end
-
-                idx = find(r == max(r), 1);
-                
-                if tot + p(idx) <= m
-                    tot = tot + p(idx);
-                    superior(idx) = 1;
-                else
-                    frac = (m - tot) / p(idx);
-                    % tot = m;
-                    superior(idx) = frac;
-                    valid = false;
-                    break;
-                end
-                r(idx) = -Inf;
+            idx = find(r == max(r), 1);
+            frac = (m - tot) / p(idx);
+            % tot = m;
+            superior(idx) = frac;
+            if(mod(frac, 1) ~= 0) 
+                valid = false;
             end
         end
         
@@ -114,14 +103,19 @@ function [optimum_arg, optimum] = binary_knapsack(values, weights, ...
 
     returns = values ./ weights;
 
+    limits = floor(maximum ./ weights);
+
     data = {values, ...  % values
             weights, ... % weights
             maximum, ... % maximum weight
-            returns};    % return
+            returns ...  % return
+            limits};     % limits
 
     if(verbose > 0)
         fprintf("\tReturns:\n");
         disp(returns);
+        fprintf("\tLimits:\n");
+        disp(limits);
     end
 
     [~, optimum, optimum_arg] ...
