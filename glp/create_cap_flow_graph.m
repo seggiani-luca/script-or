@@ -1,7 +1,7 @@
 % genera un oggetto digraph (grafo orientato) predisposto alla GLP.
 % - @budgets è un vettore numerico che va a popolare una tabella Nodes, 
 %   con un unico campo:
-%   - Budgets, rappresentate i bilanci sui nodi;
+%   - Budgets, rappresentante i bilanci sui nodi;
 % - @edges è un'array di celle che va a popolare una tabella Edges con
 %   campi:
 %   - EndNodes, rappresentante i nodi di partenza e arrivo dell'arco;

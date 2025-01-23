@@ -26,6 +26,8 @@ function base_TLU = feasible_min_flow(CFG, verbose)
         T{end + 1} = new_edge{1:2};
     end
 
+    new_edges = sortrows(new_edges, [1, 2]);
+
     aux_CFG = digraph(new_edges.EndNodes(:, 1), new_edges.EndNodes(:, 2));
     aux_CFG.Nodes.Budgets = new_budgets;
     aux_CFG.Edges.Costs = new_edges.Costs;
@@ -62,4 +64,45 @@ function base_TLU = feasible_min_flow(CFG, verbose)
         
         base_TLU{i} = cur_part;
     end
+
+    base_TLU = to_index_TLU(CFG, base_TLU);
+
+    T = base_TLU{1};
+
+    edge_table = CFG.Edges;
+
+    select_edges = edge_table(T, :);
+    cycle_CFG = graph(select_edges.EndNodes(:, 1), ...
+                      select_edges.EndNodes(:, 2));
+    
+    comps = conncomp(cycle_CFG);
+
+    while max(comps) > 1
+        old_max = max(comps);
+        for i = 1:height(edge_table)
+            if ismember(i, T)
+                continue;
+            end
+
+            T = [T; i];
+            
+            select_edges = edge_table(T, :);
+            cycle_CFG = graph(select_edges.EndNodes(:, 1), ...
+                              select_edges.EndNodes(:, 2));
+    
+            comps = conncomp(cycle_CFG);
+
+            if max(comps) == old_max - 1;
+                break;
+            end
+            
+            T(end) = [];
+        end
+    end
+
+    base_TLU{1} = T;
+    base_TLU{2} = setdiff(base_TLU{2}, T);
+    base_TLU{3} = setdiff(base_TLU{3}, T);
+
+    base_TLU = to_edge_TLU(CFG, base_TLU);
 end

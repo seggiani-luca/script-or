@@ -7,8 +7,9 @@
 % l'albero stesso, il valore ottimo e l'argomento della funzione obiettivo 
 % che lo ottiene.
 function [branch_tree, optimum, optimum_arg] ...
-        = branch_and_bound(data, verbose, ...
-                           inferior_eval, superior_eval, get_constraints)
+        = branch_and_bound(data, verbose, direction, ... %'max' or 'min'
+                           inferior_eval, superior_eval, get_constraints, ...
+                           step_limit)
 
     function print_nodes(node_table)
         num_nodes = height(node_table);
@@ -25,8 +26,14 @@ function [branch_tree, optimum, optimum_arg] ...
             num_constraints = width(constraints);
             for j = 1:num_constraints
                 constraint = constraints{:, j};
-                disp("Index " + constraint(1) + ...
+                if numel(constraint) == 2
+                    disp("Index " + constraint(1) + ...
                      " constrained at " + constraint(2));
+                else
+                    disp("Edge " + constraint(1) + " - " ...
+                        + constraint(2) + ...
+                     " constrained at " + constraint(3));
+                end
             end
 
             superior = node_data{:, 2};
@@ -81,7 +88,7 @@ function [branch_tree, optimum, optimum_arg] ...
     end
 
     function [tree, opt, opt_arg] = branch(tree, data, opt, opt_arg, ...
-                                           verbose, step)
+                                           verbose, step, direction)
         exit = true;
 
         if(verbose > 1)
@@ -104,7 +111,7 @@ function [branch_tree, optimum, optimum_arg] ...
             exit = false;
 
             new_constraints = get_constraints(node, data);
-            num_consts = width(new_constraints)
+            num_consts = width(new_constraints);
 
             tokens = regexp(node{1}, 'P(\d+)-(\d+)', 'tokens');
             i = str2double(tokens{1}{1});
@@ -116,7 +123,7 @@ function [branch_tree, optimum, optimum_arg] ...
                 new_i = i + 1;
                 new_js = [];
                 for d = 1:num_consts
-                    new_js(end + 1) = num_consts * j - d + 1;
+                    new_js(end + 1) = num_consts * (j - 1) + d;
                 end
             end
             
@@ -129,28 +136,56 @@ function [branch_tree, optimum, optimum_arg] ...
    
                 implicit = false;
                 empty = false;
-
-                if (superior_val <= opt)  || ~inf_valid
-                    implicit = true;
-                end
-
-                if ~inf_valid
-                    empty = true;
-                end
-
-                if (superior_val > opt) && sup_valid
-                    implicit = true;
-                    opt = superior_val;
-                    opt_arg = superior;
-                end
-
-                if sup_valid
-                    implicit = true;
-                end
-
-                if (inferior_val > opt) && inf_valid
-                    opt = inferior_val;
-                    opt_arg = inferior;
+                
+                if direction == 'max'
+                    if (superior_val <= opt)  || ~inf_valid
+                        implicit = true;
+                    end
+    
+                    if ~inf_valid
+                        empty = true;
+                    end
+    
+                    if (superior_val > opt) && sup_valid
+                        implicit = true;
+                        opt = superior_val;
+                        opt_arg = superior;
+                    end
+    
+                    if sup_valid
+                        implicit = true;
+                    end
+    
+                    if (inferior_val > opt) && inf_valid
+                        opt = inferior_val;
+                        opt_arg = inferior;
+                    end
+                elseif direction == 'min'
+                    if (inferior_val >= opt)  || ~sup_valid
+                        implicit = true;
+                    end
+    
+                    if ~sup_valid
+                        empty = true;
+                    end
+    
+                    if (inferior_val < opt) && inf_valid
+                        implicit = true;
+                        opt = inferior_val;
+                        opt_arg = inferior;
+                    end
+    
+                    if inf_valid
+                        implicit = true;
+                    end
+    
+                    if (superior_val < opt) && sup_valid
+                        opt = superior_val;
+                        opt_arg = superior;
+                    end
+                else
+                    disp("Unknown direction option " + direction);
+                    return;
                 end
 
                 node_data = {constraints_dir, inferior, superior, ...
@@ -163,12 +198,16 @@ function [branch_tree, optimum, optimum_arg] ...
                 tree = addedge(tree, n, new_node_idx);
             end
         end
-        if ~exit
+        if ~exit && step ~= step_limit
             [tree, opt, opt_arg] = branch(tree, data, opt, opt_arg, ...
-                                          verbose, step + 1);
+                                          verbose, step + 1, direction);
         end
     end
     
+    if nargin < 7
+        step_limit = Inf;
+    end
+
     [inferior, inferior_val, inf_valid] ...
         = inferior_eval(data, {});
     [superior, superior_val, sup_valid] ...
@@ -198,7 +237,7 @@ function [branch_tree, optimum, optimum_arg] ...
     end
 
     [branch_tree, optimum, optimum_arg] ... 
-        = branch(branch_tree, data, opt, opt_arg, verbose, 0);
+        = branch(branch_tree, data, opt, opt_arg, verbose, 0, direction);
 
     if(verbose > 2)
         plot(branch_tree);
