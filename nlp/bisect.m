@@ -1,3 +1,5 @@
+% biseziona @func fra @a e @b finché la derivata prima non vale meno di
+% @epsilon.
 function [opt, opt_val] = bisect(func, a, b, verbose, epsilon) % su x
     if nargin < 5
         epsilon = 0.0001;

@@ -1,3 +1,5 @@
+% applica l'algoritmo del backtracking a @func, a partire da @x0, con
+% moltiplicatore @g e parametro @a per la condizione di Armijo
 function [opt, opt_val] = backtrack(func, a, g, x0, verbose) % su x
     if nargin < 5
         verbose = 0;

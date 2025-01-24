@@ -1,3 +1,4 @@
+% calcola i limiti della condizione di Armijo-Golstein-Wolfe
 function [lower, upper] = wolfe(func, a, b, x0, verbose) % su x
     if nargin < 5
         verbose = 0;

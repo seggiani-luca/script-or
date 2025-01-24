@@ -1,3 +1,5 @@
+% applica il metodo di Newton a @func, a partire da @x0, finché la derivata
+% prima non vale meno di @epsilon.
 function [opt, opt_val] = newton(func, x0, verbose, epsilon) % su x
     if nargin < 4
         epsilon = 0.0001;
