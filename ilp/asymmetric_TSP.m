@@ -7,15 +7,13 @@ function [optimum_arg, optimum, b_tree] = asymmetric_TSP(costs, ...
                                                          constraints, ...
                                                          verbose)
 
-    function new_constraints = get_constraints(node, ~)
+    function new_constraints = get_constraints(node, ~, step)
         node_constraints = node{2};
 
         new_constraints = {
-            [node_constraints, [constraints{c_idx}, 0]], ...
-            [node_constraints, [constraints{c_idx}, 1]]
+            [node_constraints, [constraints{step + 1}, 0]], ...
+            [node_constraints, [constraints{step + 1}, 1]]
         };
-        
-        c_idx = c_idx + 1;
     end
 
     function [val] = eval_value(aTSP, eval)
@@ -47,8 +45,6 @@ function [optimum_arg, optimum, b_tree] = asymmetric_TSP(costs, ...
     if nargin < 3
         verbose = 0;
     end
-
-    c_idx = 1;
 
     aTSP = create_asym_tsp_graph(costs);
 

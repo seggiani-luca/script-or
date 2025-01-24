@@ -8,7 +8,7 @@ function [optimum_arg, optimum, b_tree] = binary_knapsack(values, ...
                                                           maximum, ...
                                                           verbose)
     
-    function new_constraints = get_constraints(node, ~)
+    function new_constraints = get_constraints(node, ~, ~)
         constraints = node{2};
         superior = node{4};
         idx = find(mod(superior, 1) ~= 0);

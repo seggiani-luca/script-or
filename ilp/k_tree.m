@@ -16,6 +16,10 @@ function [tree_edges, valid] = k_tree(TSP, k, constraints)
         for i = 1:numel(constraints)
             constraint = constraints{i};
 
+            if constraint(:, 3) ~= 1
+                continue;
+            end
+
             if constraint(:, 1) == k || constraint(:, 2) == k
                 continue;
             end
@@ -29,15 +33,29 @@ function [tree_edges, valid] = k_tree(TSP, k, constraints)
 
             MST{end + 1} = constraint(:, 1:2);
             cycle_CFG = addedge(cycle_CFG, constraint(1), constraint(2));
+
+            rm_condition1 = all(edgelist.EndNodes == constraint(:, 1:2), 2);
+            rm_condition2 = all(edgelist.EndNodes == flip(constraint(:, 1:2)), 2);
+            rm_condition = rm_condition1 | rm_condition2;
+            
+            edgelist = edgelist(~rm_condition, :);
         end
         
         while numel(MST) < height(TSP.Nodes) - 1
             edge = edgelist(1, 1);
             edgelist(1, :) = [];
 
+            if edge{1,1}(1) > edge{1,1}(2)
+                continue;
+            end
+
             cont = false;
             for i = 1:numel(constraints)
                 constraint = constraints{i};
+
+                if constraint(:, 3) ~= 0
+                    continue;
+                end
     
                 if constraint(:, 1) == k || constraint(:, 2) == k
                     continue;
@@ -50,7 +68,7 @@ function [tree_edges, valid] = k_tree(TSP, k, constraints)
                     constraint(2) = constraint(2) - 1;
                 end
 
-                if match_edges(edge{1,1}, constraint(:, 1:2)) && constraint(:, 3) == 0
+                if match_edges(edge{1,1}, constraint(:, 1:2))
                     cont = true;
                 end
             end

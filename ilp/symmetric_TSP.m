@@ -9,15 +9,13 @@ function [optimum_arg, optimum, b_tree] = symmetric_TSP(costs, ...
                                                         from, k, ...
                                                         verbose)
 
-    function new_constraints = get_constraints(node, ~)
+    function new_constraints = get_constraints(node, ~, step)
         node_constraints = node{2};
 
         new_constraints = {
-            [node_constraints, [constraints{c_idx}, 0]], ...
-            [node_constraints, [constraints{c_idx}, 1]]
+            [node_constraints, [constraints{step + 1}, 0]], ...
+            [node_constraints, [constraints{step + 1}, 1]]
         };
-        
-        c_idx = c_idx + 1;
     end
 
     function [val] = eval_value(TSP, eval)
@@ -63,8 +61,6 @@ function [optimum_arg, optimum, b_tree] = symmetric_TSP(costs, ...
     if nargin < 5
         verbose = 0;
     end
-
-    c_idx = 1;
 
     TSP = create_sym_tsp_graph(costs);
 

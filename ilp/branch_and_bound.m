@@ -110,7 +110,7 @@ function [branch_tree, optimum, optimum_arg] ...
 
             exit = false;
 
-            new_constraints = get_constraints(node, data);
+            new_constraints = get_constraints(node, data, step);
             num_consts = width(new_constraints);
 
             tokens = regexp(node{1}, 'P(\d+)-(\d+)', 'tokens');

@@ -8,7 +8,7 @@ function [optimum_arg, optimum, b_tree] = integer_knapsack(values, ...
                                                           maximum, ...
                                                           verbose)
 
-    function new_constraints = get_constraints(node, data)
+    function new_constraints = get_constraints(node, data, ~)
         constraints = node{2};
         superior = node{4};
         limits = data{5};
