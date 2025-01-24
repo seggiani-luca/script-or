@@ -64,6 +64,48 @@ L'utilità della funzione `branch_and_bound()` sta principalmente negli wrapper 
 ### Zaino binario e intero
 
 `binary_knapsack()` e `integer_knapsack()` sfruttano il metodo del branch and bound per la risoluzione, rispettivamente, di problemi di zaino binario e intero.
+Gli argomenti da fornire in entrambi i casi sono `values`, il vettore dei valori, `weights`, il vettore dei pesi, e `maximum`, il peso massimo supportato.
+L'algoritmo sceglie automaticamente le variabili da istanziare sulla base delle soluzioni non intere del rilassato continuo.
+
+Un esempio di esecuzione del caso binario può essere:
+
+```matlab
+>> values = [28, 31, 35, 24];
+>> weights = [12, 9, 7, 6];
+>> max = 17;
+>> [opt_arg, opt, b_tree] = binary_knapsack(values, weights, max)
+opt_arg =
+     0
+     1
+     1
+     0
+opt =
+    66
+b_tree = 
+  digraph with properties:
+
+    Edges: [8×1 table]
+    Nodes: [9×2 table]
+```
+
+Mentre per quanto riguarda il caso intero si ha:
+
+```matlab
+[...] % stessi argomenti di prima
+>> [opt_arg, opt, b_tree] = integer_knapsack(values, weights, max)
+opt_arg =
+     0
+     0
+     2
+     0
+opt =
+    70
+b_tree = 
+  digraph with properties:
+
+    Edges: [7×1 table]
+    Nodes: [8×2 table]
+```
 
 ### TSP asimmetrico e simmetrico
 
