@@ -48,6 +48,7 @@ Una funzione simile, `feasible_primal_simplex()`, è fornita per il primale:
 ans =
      3     4
 ```
+> ⚠️ **Attenzione:** MATLAB c'è l'ha a morte con le matrici singolari (e come biasimarlo). C'è un bug noto della `feasible_primal_simplex()` dove, se i primi `n` indici che vengono selezionati ad arbitrio per valutare le disequazioni valide e non, si crea una matrice di base singolare e l'algoritmo fallisce. In questo caso il `feasible_dual_simplex()` dovrebbe essere più sicuro.
 
 Nel caso di problemi che rispettano le condizioni di cui sopra, quindi, si può emulare il comportamento di `linprog()` come segue:
 - Si ricava una base ammissibile di partenza con `feasible_primal_simplex()` o `feasible_dual_simplex()`:
