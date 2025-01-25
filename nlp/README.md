@@ -172,3 +172,136 @@ opt_val =
 - `newton_backtrack`: metodo di Newton con backtracking.
 
 I metodi a passo fisso prendono opzionalmente un parametro `a`, altrimenti calcolano il passo ottimo come 1/L, con L costante di Lipschitz di `func`.
+
+## Ottimizzazione vincolata su più variabili
+
+Si hanno poi due funzioni per l'ottimizzazione vincolata su più variabili: il metodo di Frank-Wolfe implementato in `frank_wolfe()` e il metodo del gradiente proiettato implementato in `projected_gradient()`. 
+Entrambe queste funzioni accettano come argomenti la funzione `func`, un poliedro definito dalla matrice `A` e dal vettore `b`, e un punto iniziale `x0`, e restituiscono l'argomento del valore ottimo `opt` e il valore ottimo stesso `opt_val`.
+
+Un esempio di utilizzo per quanto riguarda `frank_wolfe()` è il seguente:
+
+```matlab
+>> syms x1 x2 real;
+>> func = -2 * x1^2 - 10 * x1 * x2 + 4 * x1 + 10 * x2;
+>> A = [-1, -2; -4, 3; 3, -2; 2, 1];
+>> b = [-3, -1, 9, 13];
+>> x0 = [5/3, 2/3];
+>> [opt, opt_val] = frank_wolfe(func, A, b, x0, 2)
+<------------------------------ Descent step 0 ------------------------------>
+	x_k:
+    1.6667    0.6667
+	y_k:
+     4     5
+	func(x_k)
+   -3.3333
+	func(y_k)
+  -166
+	c:
+   -9.3333
+   -6.6667
+	d_k:
+    2.3333
+    4.3333
+
+Phi:
+- 112.0*x^2 - 50.666666666666666666666666666667*x - 3.3333333333333333333333333333333
+
+t_k:	     1
+[...]
+opt =
+    4.0556    4.8889
+opt_val =
+ -166.0556
+>> 
+```
+
+mentre per quanto riguarda `projected_gradient()` è il seguente:
+
+```matlab
+>> [opt, opt_val] = projected_gradient(func, A, b, x0, 2)
+<------------------------------ Descent step 0 ------------------------------>
+	x_k:
+    1.6667    0.6667
+	M:
+    -1    -2
+	H:
+    0.8000   -0.4000
+   -0.4000    0.2000
+	func_1(x_k):
+   -9.3333
+   -6.6667
+	d_k:
+    4.8000
+   -2.4000
+
+Phi:
+69.12*x^2 - 28.8*x - 3.3333333333333333333333333333333
+
+t_hat_k:	    0.2778
+
+t_k:	    0.2083
+[...]
+opt =
+    4.0556    4.8889
+opt_val =
+ -166.0556
+```
+
+## Sistema LKT
+
+Viene fornita una funzione per la valutazione del sistema Lagrange-Khun-Tucker in `lkt()`. 
+Questa prende in argomento `func`, una funzione simbolica, e `g` e `h`, due vettori di funzioni simboliche che definiscono rispettivamente i vincoli di diseguaglianza e di uguaglianza.
+La funzione restituisce una tabella con tutte le soluzioni trovate al sistema LKT.
+Opzionalmente, si può fornire alla funzione un punto `x0`.
+In tal caso, la funzione cercherà di trovare il valore dei moltiplicatori in quel punto, se quel punto è soluzione dell'LKT.
+
+Un esempio di utilizzo è il seguente:
+
+```matlab
+>> cons1 = -x1 - 2 * x2 + 3;
+>> cons2 = -4 * x1 + 3 * x2 + 1;
+>> cons3 = 3 * x1 - 2 * x2 - 9;
+>> cons4 = 2 * x1 + x2 - 13;
+>> cons = [cons1; cons2; cons3; cons4]; % non conosco un modo migliore di farlo
+>> lkt(func, cons, [], 2)
+	LKT system:
+3*lambda3 - 4*lambda2 - lambda1 + 2*lambda4 - 4*x1 - 10*x2 + 4
+      3*lambda2 - 2*lambda1 - 2*lambda3 + lambda4 - 10*x1 + 10
+                                      -lambda1*(x1 + 2*x2 - 3)
+                                     lambda2*(3*x2 - 4*x1 + 1)
+                                    -lambda3*(2*x2 - 3*x1 + 9)
+                                      lambda4*(2*x1 + x2 - 13)
+     x1        x2      lambda1    lambda2    lambda3    lambda4
+    _____    ______    _______    _______    _______    _______
+    1        0         0          0          0           0     
+    3        0         -19/2      0          -1/2        0     
+    8/3      1/6       -25/3      0          0           0     
+    1        1         -30/11     -20/11     0           0     
+    31/46    13/23     0          -25/23     0           0     
+    4        5         0          -1/5       0           153/5 
+    23/3     -7/3      -130/3     0          0           -20   
+    32/17    -57/34    0          0          -75/17      0     
+    5        3         0          0          -34/7       212/7 
+    73/18    44/9      0          0          0           275/9 
+    25       33        0          1572       2238        0
+```
+
+o nel caso specifico del punto `[4, 5]`:
+
+```matlab
+>> lkt(func, cons, [], 2, [4, 5])
+	LKT system:
+3*lambda3 - 4*lambda2 - lambda1 + 2*lambda4 - 62
+3*lambda2 - 2*lambda1 - 2*lambda3 + lambda4 - 30
+                                     -11*lambda1
+                                               0
+                                      -7*lambda3
+                                               0
+    x1    x2    lambda1    lambda2    lambda3    lambda4
+    __    __    _______    _______    _______    _______
+    0     0        0        -1/5         0        153/5 
+```
+
+Si nota poi che ci sono altre funzioni nella presente directory, fra cui alcune funzioni per il disegno della regione ammissibile, nel caso questa sia un poliedro, e della funzione ivi contenuta (`draw_cons_func()` e `draw_free_func()`), e una funzione per il calcolo dei vertici di un poliedro (`get_vertices()`).
+Queste sono documentate più che sufficientemente nella loro implementazione.
+In caso di dubbi, si ricorda che il parametro `verbose` è accettato dalla maggior parte delle funzioni e restituisce informazioni via via maggiori sul procedimento interno eseguito (e nel caso di sottofunzioni che vengono chiamate, del loro funzionamento interno, cosa che torna utile per osservare il comportamento degli algoritmi di ottimizzazione iterativi).
