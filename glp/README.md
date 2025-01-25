@@ -1,4 +1,4 @@
-# Programmazione su grafi
+# Programmazione lineare su grafi
 
 Queste funzioni lavorano con gli oggetti `digraph` forniti dalla libreria di base di MATLAB, appositamente complementati da informazioni riguardanti i **bilanci** ai *nodi* e i **costi** e le **capacità** agli *archi*.
 La funzione `create_cap_flow_graph()` è delegata alla creazione di grafi di flusso capacitato di questo tipo, fornendo un vettore dei bilanci e un array di celle di archi (indicati da nodi di partenza e arrivo, costo e capacità), come argomenti:
